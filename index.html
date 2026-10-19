@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GAM Launcher — Clickable Mockup</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div class="brand-text">
+          <div class="name">Launcher</div>
+          <div class="sub">Campaign & Compliance</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button data-screen="dashboard" class="nav-item active"><span class="ico">🏠</span><span>Dashboard</span></button>
+        <button data-screen="templates" class="nav-item"><span class="ico">📚</span><span>Templates</span></button>
+        <button data-screen="launch" class="nav-item"><span class="ico">🚀</span><span>New Launch</span></button>
+        <button data-screen="creative" class="nav-item"><span class="ico">🖼️</span><span>Library</span></button>
+        <button data-screen="problems" class="nav-item"><span class="ico">⚠️</span><span>Problems</span></button>
+        <button data-screen="settings" class="nav-item"><span class="ico">⚙️</span><span>Settings</span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status"><span class="dot green"></span> Meta API: Connected</div>
+        <div class="links">
+          <button class="link small" id="helpBtn">AI Help</button>
+          <button class="link small" id="printSpec">Print Spec</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <div>
+          <h1 id="screen-title">Dashboard</h1>
+          <p class="subtitle">Template-driven, compliance-first launcher — mobile-first UI</p>
+        </div>
+        <div class="top-actions">
+          <button class="btn ghost" id="quickLaunchBtn">Quick Launch</button>
+          <button class="btn primary" data-screen="launch" onclick="goToScreen('launch')">+ New Launch</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="screen active">
+        <div class="kpis">
+          <div class="kpi"><div class="label">Launches (7d)</div><div class="value">142</div></div>
+          <div class="kpi"><div class="label">Active campaigns</div><div class="value">38</div></div>
+          <div class="kpi"><div class="label">Approval rate</div><div class="value">92%</div></div>
+          <div class="kpi"><div class="label">Problems</div><div class="value warn">3</div></div>
+        </div>
+
+        <div class="grid">
+          <div class="card wide">
+            <div class="card-header"><h2>Saved Templates</h2><button class="text-btn" onclick="goToScreen('templates')">Manage</button></div>
+            <div class="templates-list" id="templatesList"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h2>Launch Check</h2></div>
+            <div class="check-box">
+              <div class="score-wrap">
+                <div class="score-circle">90%</div>
+              </div>
+              <div class="score-copy">
+                <div class="line ok">Special Ad Category: OK</div>
+                <div class="line warn">Landing page: potential mismatch</div>
+                <div class="line ok">Fallback library: ready</div>
+              </div>
+              <div class="check-actions">
+                <button class="btn" id="runScan">Run Scan</button>
+                <button class="btn ghost" onclick="goToScreen('problems')">View Problems</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>Recent Launches</h2></div>
+          <div id="recentLaunches"></div>
+        </div>
+      </section>
+
+      <section id="templates" class="screen">
+        <div class="card">
+          <div class="card-header"><h2>Templates</h2><button class="btn primary" id="newTemplateBtn">+ New Template</button></div>
+          <div class="template-toolbar">
+            <input type="text" placeholder="Search templates..." />
+            <button class="btn ghost">Filter</button>
+          </div>
+
+          <div id="templatesGrid" class="template-grid"></div>
+        </div>
+      </section>
+
+      <section id="launch" class="screen">
+        <div class="card">
+          <div class="card-header"><h2>New Launch</h2><div class="small muted">Follow steps to launch campaigns across sites/geos/accounts</div></div>
+          <div class="wizard">
+            <div class="steps" id="wizardSteps">
+              <div class="step active" data-step="1">1. Template</div>
+              <div class="step" data-step="2">2. Creatives</div>
+              <div class="step" data-step="3">3. Mapping</div>
+              <div class="step" data-step="4">4. Mapping</div>
+              <div class="step" data-step="5">5. Review</div>
+            </div>
+
+            <div class="step-content" id="stepContent">
+              <div class="step-pane active" data-step="1">
+                <label>Choose Template
+                  <select id="selectTemplate"></select>
+                </label>
+                <label>Landing URL
+                  <input id="inputUrl" placeholder="https://example.com/apply" />
+                </label>
+                <label>Geos (select)
+                  <select id="selectGeos" multiple>
+                    <option>India</option><option>United States</option><option>United Arab Emirates</option><option>Philippines</option>
+                  </select>
+                </label>
+                <div class="hint">AI Suggest: <button class="link" onclick="aiSuggestTemplate()">Use AI to pick best template</button></div>
+              </div>
+
+              <div class="step-pane" data-step="2">
+                <div class="row">
+                  <div class="col">
+                    <div class="uploader" id="uploader">
+                      <div class="uploader-instruction">Drag & drop or click to add creatives</div>
+                      <input id="fileInput" type="file" multiple style="display:none" accept="image/*,video/*" />
+                      <div class="uploader-actions">
+                        <button class="btn" onclick="document.getElementById('fileInput').click()">Add Files</button>
+                        <button class="btn ghost" onclick="openLibrary()">Choose from Library</button>
+                      </div>
+                      <div id="uploadedPreview" class="preview-grid"></div>
+                    </div>
+                  </div>
+                  <div class="col narrow">
+                    <div class="card small">
+                      <h4>Guides</h4>
+                      <ul class="guide-list">
+                        <li><strong>Image size:</strong> 1200×628 recommended</li>
+                        <li><strong>Text:</strong> Avoid "guarantee", "100%"</li>
+                        <li><strong>Special Ads:</strong> If hiring — declare</li>
+                        <li><button class="link" onclick="openAIExplain('creatives')">AI Explain</button></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-pane" data-step="3">
+                <h3>Map creatives to ad slots</h3>
+                <div id="mappingArea" class="mapping-area">
+                </div>
+              </div>
+
+              <div class="step-pane" data-step="4">
+                <div class="form-grid">
+                  <label>Ad Account
+                    <select id="adAccountSelect"><option>Account 123 (IN)</option><option>Account 456 (US)</option></select>
+                  </label>
+                  <label>Budget (daily)
+                    <input id="inputBudget" type="number" value="199" /> <small class="muted">currency auto</small>
+                  </label>
+                  <label>Launch Mode
+                    <select id="launchMode"><option>PAUSED (recommended)</option><option>ACTIVE</option></select>
+                  </label>
+
+                  <label class="switch">
+                    <input type="checkbox" id="autoReplace" checked />
+                    <span>Auto-replace disapproved creative once</span>
+                  </label>
+
+                  <label class="switch">
+                    <input type="checkbox" id="autoPublish" />
+                    <span>Auto-publish replacement (advanced)</span>
+                  </label>
+
+                  <label>
+                    Special Ad Category:
+                    <select id="specialAd">
+                      <option value="none">None</option>
+                      <option value="employment">Employment</option>
+                      <option value="housing">Housing</option>
+                      <option value="credit">Credit</option>
+                    </select>
+                  </label>
+                  <div class="hint"><button class="link" onclick="openAIExplain('special')">AI: Do I need to declare?</button></div>
+                </div>
+              </div>
+
+              <div class="step-pane" data-step="5">
+                <h3>Review & Compliance</h3>
+                <div class="review-panel">
+                  <div class="left">
+                    <h4>Launch snapshot</h4>
+                    <div id="snapshot"></div>
+                  </div>
+                  <div class="right">
+                    <h4>Compliance Scan</h4>
+                    <div id="scanResult">
+                      <div class="scan-row ok">Landing page: OK</div>
+                      <div class="scan-row warn">Creative 2: text ratio high</div>
+                      <div class="scan-row ok">Ad account: healthy</div>
+                    </div>
+                    <div class="review-actions">
+                      <button class="btn primary" id="submitLaunchBtn">Submit Launch</button>
+                      <button class="btn ghost" onclick="goToStep(1)">Edit</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-controls">
+              <button class="btn ghost" id="wizardBack">Back</button>
+              <button class="btn primary" id="wizardNext">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="creative" class="screen">
+        <div class="card">
+          <div class="card-header"><h2>Creative Library</h2><div><button class="btn" onclick="openUploadModal()">Upload</button></div></div>
+          <div id="libraryGrid" class="library-grid"></div>
+        </div>
+      </section>
+
+      <section id="problems" class="screen">
+        <div class="card">
+          <div class="card-header"><h2>Problems & Action Center</h2></div>
+          <div id="problemsList" class="problems-list"></div>
+        </div>
+      </section>
+
+      <section id="settings" class="screen">
+        <div class="card">
+          <div class="card-header"><h2>Settings</h2></div>
+          <div class="settings-grid">
+            <label>Subdomain
+              <input id="subdomain" placeholder="launcher.example.com" />
+            </label>
+            <label>Drive privacy
+              <select id="drivePrivacy"><option>Public - anyone with link</option><option>Private - Google OAuth</option></select>
+            </label>
+            <label>Brand color
+              <input id="brandColor" type="color" value="#0b6efd" />
+            </label>
+            <div class="small muted">Remember to add OAuth redirect URI to your FB App.</div>
+            <div style="margin-top:12px"><button class="btn primary" onclick="saveSettings()">Save</button></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <div id="aiModal" class="modal hidden">
+    <div class="modal-body">
+      <h3>AI Helper</h3>
+      <div id="aiContent">Click an AI Explain link to see contextual help.</div>
+      <div class="modal-actions"><button class="btn" onclick="closeAIModal()">Close</button></div>
+    </div>
+  </div>
+
+  <div id="uploadModal" class="modal hidden">
+    <div class="modal-body">
+      <h3>Upload Creative</h3>
+      <input id="uploadInput" type="file" multiple accept="image/*,video/*" />
+      <div style="margin-top:12px"><button class="btn primary" onclick="doUpload()">Upload</button> <button class="btn ghost" onclick="closeUploadModal()">Cancel</button></div>
+    </div>
+  </div>
+
+  <div id="launchResult" class="modal hidden">
+    <div class="modal-body">
+      <h3>Launch Submitted</h3>
+      <p id="launchResultText">Your launch has been queued (ID: LCH-0001). Worker will process and update status.</p>
+      <div class="modal-actions"><button class="btn" onclick="closeLaunchResult()">Close</button></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
